@@ -3,26 +3,38 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Allow access from frontend (Flutter, web, etc.)
+# Allow frontend access (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # You can restrict this to your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/")
-def root():
-    return {"message": "AQI FastAPI backend is working!"}
+def read_root():
+    return {"message": "AQI FastAPI is live"}
 
 @app.get("/aqi")
-def get_aqi(lat: float = Query(...), lon: float = Query(...)):
-    # Moderate air quality data example (based on lat/lon)
-    return {
-        "location": f"Location at lat={lat}, lon={lon}",
-        "ground_aqi": 92,  # Moderate level
-        "satellite_aqi": 90,
-        "forecast": [85, 89, 94],  # next 24–72 hours
-        "health": "Moderate air quality. Unusually sensitive individuals should consider limiting prolonged outdoor exertion."
-    }
+def get_aqi(city: str = None, lat: float = None, lon: float = None):
+    if city:
+        return {
+            "source": "city",
+            "city": city,
+            "aqi": 92,
+            "category": "Moderate",
+            "forecast": [89, 90, 93, 91, 94, 92, 90]
+        }
+    elif lat is not None and lon is not None:
+        return {
+            "source": "coordinates",
+            "lat": lat,
+            "lon": lon,
+            "aqi": 85,
+            "category": "Moderate",
+            "forecast": [83, 84, 86, 85, 87, 86, 85]
+        }
+    else:
+        return {"error": "Please provide either a city or coordinates (lat/lon)"}
+
