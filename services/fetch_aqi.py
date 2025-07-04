@@ -1,7 +1,7 @@
 import requests
 
 def get_ground_aqi(lat, lon):
-    api_key = "YOUR_IQAIR_API_KEY"
+    api_key = "7973fec3c5b7c6729210890519cf5da8e0e32392"
     url = f"http://api.airvisual.com/v2/nearest_city?lat={lat}&lon={lon}&key={api_key}"
     response = requests.get(url)
     return response.json()
